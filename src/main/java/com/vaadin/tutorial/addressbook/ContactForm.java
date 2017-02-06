@@ -11,6 +11,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.ui.DateField;
+import com.vaadin.v7.ui.Grid.SingleSelectionModel;
 import com.vaadin.v7.ui.TextField;
 
 /* Create custom UI Components.
@@ -25,11 +26,14 @@ public class ContactForm extends FormLayout {
 
     Button save = new Button("Save", this::save);
     Button cancel = new Button("Cancel", this::cancel);
+    Button remove = new Button("Remove", this::remove);
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
-    TextField phone = new TextField("Phone");
-    TextField email = new TextField("Email");
-    DateField birthDate = new DateField("Birth date");
+    TextField task = new TextField("Task");
+    DateField startDate = new DateField("Start date");
+    DateField expectedEndDate = new DateField("Expected end date");
+    
+    boolean canRemove = false;
 
     Contact contact;
 
@@ -51,16 +55,19 @@ public class ContactForm extends FormLayout {
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         setVisible(false);
+        
+        remove.setStyleName(ValoTheme.BUTTON_PRIMARY);
+        setVisible(false);
     }
 
     private void buildLayout() {
         setSizeUndefined();
         setMargin(true);
 
-        HorizontalLayout actions = new HorizontalLayout(save, cancel);
+        HorizontalLayout actions = new HorizontalLayout(save, cancel, remove);
         actions.setSpacing(true);
 
-        addComponents(actions, firstName, lastName, phone, email, birthDate);
+        addComponents(actions, firstName, lastName, task, startDate, expectedEndDate);
     }
 
     /*
@@ -82,8 +89,7 @@ public class ContactForm extends FormLayout {
             // Save DAO to backend with direct synchronous service API
             getUI().service.save(contact);
 
-            String msg = String.format("Saved '%s %s'.", contact.getFirstName(),
-                    contact.getLastName());
+            String msg = String.format("Saved '%s'.", contact.getTask());
             Notification.show(msg, Type.TRAY_NOTIFICATION);
             getUI().refreshContacts();
         } catch (FieldGroup.CommitException e) {
@@ -95,12 +101,35 @@ public class ContactForm extends FormLayout {
         // Place to call business logic.
         Notification.show("Cancelled", Type.TRAY_NOTIFICATION);
         getUI().contactList.select(null);
+        getUI().refreshContacts();
     }
 
+    public void remove(Button.ClickEvent event) {
+    	getUI().contactList.addSelectionListener(e -> {
+    		Object selected = ((SingleSelectionModel) 
+    				getUI().contactList.getSelectionModel()).getSelectedRow();
+    		
+    		if (selected != null) {
+    			canRemove = true;
+    		}
+    	});
+    	if (canRemove) {
+    		getUI().service.delete(contact);
+    		
+    		String msg2 = String.format("Removed '%s'.", contact.getTask());
+    		Notification.show(msg2, Type.TRAY_NOTIFICATION);
+    		getUI().refreshContacts();
+    	}
+    	else {
+    		String msg1 = "Please select an item to remove.";
+			Notification.show(msg1, Type.TRAY_NOTIFICATION);
+    	}
+    }
+    
     void edit(Contact contact) {
         this.contact = contact;
         if (contact != null) {
-            // Bind the properties of the contact POJO to fiels in this form
+            // Bind the properties of the contact POJO to fields in this form
             formFieldBindings = BeanFieldGroup.bindFieldsBuffered(contact,
                     this);
             firstName.focus();

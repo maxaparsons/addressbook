@@ -16,14 +16,12 @@ import java.util.logging.Logger;
 public class ContactService {
 
     // Create dummy data by randomly combining first and last names
-    static String[] fnames = { "Peter", "Alice", "John", "Mike", "Olivia",
-            "Nina", "Alex", "Rita", "Dan", "Umberto", "Henrik", "Rene", "Lisa",
-            "Linda", "Timothy", "Daniel", "Brian", "George", "Scott",
-            "Jennifer" };
-    static String[] lnames = { "Smith", "Johnson", "Williams", "Jones",
-            "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor",
-            "Anderson", "Thomas", "Jackson", "White", "Harris", "Martin",
-            "Thompson", "Young", "King", "Robinson" };
+    static String[] fnames = { "Max", "Johnathan", "Eric", "Taryn", "Levi", "Zachery",
+    		"Steve" };
+    static String[] lnames = { "Parsons", "Harris", "D'Entremont", "Young", "Matus", 
+    		"Spencer", "Boytsun" };
+    static String[] tasks = { "Buy shampoo", "Set alarm", "Bake a cake", "Read textbook",
+    		"Buy baby formula", "Go to gym", "Get flu shot" };
 
     private static ContactService instance;
 
@@ -34,16 +32,15 @@ public class ContactService {
 
             Random r = new Random(0);
             Calendar cal = Calendar.getInstance();
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 7; i++) {
                 Contact contact = new Contact();
-                contact.setFirstName(fnames[r.nextInt(fnames.length)]);
-                contact.setLastName(lnames[r.nextInt(fnames.length)]);
-                contact.setEmail(contact.getFirstName().toLowerCase() + "@"
-                        + contact.getLastName().toLowerCase() + ".com");
-                contact.setPhone("+ 358 555 " + (100 + r.nextInt(900)));
-                cal.set(1930 + r.nextInt(70),
+                contact.setFirstName(fnames[i]);
+                contact.setLastName(lnames[i]);
+                contact.setTask(tasks[i]);
+                cal.set(2017,
                         r.nextInt(11), r.nextInt(28));
-                contact.setBirthDate(cal.getTime());
+                contact.setStartDate(cal.getTime());
+                contact.setExpectedEndDate(cal.getTime());
                 contactService.save(contact);
             }
             instance = contactService;
