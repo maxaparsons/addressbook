@@ -26,14 +26,14 @@ public class ContactForm extends FormLayout {
 
     Button save = new Button("Save", this::save);
     Button cancel = new Button("Cancel", this::cancel);
-    Button remove = new Button("Remove", this::remove);
+    Button remove = new Button("Remove", this::remove); //added remove button
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
-    TextField task = new TextField("Task");
-    DateField startDate = new DateField("Start date");
+    TextField task = new TextField("Task");  	//created task, startDate, and expectedEndDate
+    DateField startDate = new DateField("Start date"); //fields in the task form
     DateField expectedEndDate = new DateField("Expected end date");
     
-    boolean canRemove = false;
+    boolean canRemove = false; //flag to determine if an entry has been selected for removal
 
     Contact contact;
 
@@ -56,7 +56,7 @@ public class ContactForm extends FormLayout {
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         setVisible(false);
         
-        remove.setStyleName(ValoTheme.BUTTON_PRIMARY);
+        remove.setStyleName(ValoTheme.BUTTON_PRIMARY); //give "Remove" a style
         setVisible(false);
     }
 
@@ -64,9 +64,10 @@ public class ContactForm extends FormLayout {
         setSizeUndefined();
         setMargin(true);
 
-        HorizontalLayout actions = new HorizontalLayout(save, cancel, remove);
+        HorizontalLayout actions = new HorizontalLayout(save, cancel, remove);//add remove button
         actions.setSpacing(true);
 
+        //add new text and date fields 
         addComponents(actions, firstName, lastName, task, startDate, expectedEndDate);
     }
 
@@ -89,6 +90,7 @@ public class ContactForm extends FormLayout {
             // Save DAO to backend with direct synchronous service API
             getUI().service.save(contact);
 
+            //changed from name to task in the notifications
             String msg = String.format("Saved '%s'.", contact.getTask());
             Notification.show(msg, Type.TRAY_NOTIFICATION);
             getUI().refreshContacts();
@@ -101,26 +103,34 @@ public class ContactForm extends FormLayout {
         // Place to call business logic.
         Notification.show("Cancelled", Type.TRAY_NOTIFICATION);
         getUI().contactList.select(null);
-        getUI().refreshContacts();
+        getUI().refreshContacts(); //refreshContacts sets the task form visibility to false
     }
 
+    //Functionality for the Remove button
     public void remove(Button.ClickEvent event) {
+    	//this selection listener is used to determine if an entry actually has been selected
+    	//in order to provide a correct notification
     	getUI().contactList.addSelectionListener(e -> {
     		Object selected = ((SingleSelectionModel) 
     				getUI().contactList.getSelectionModel()).getSelectedRow();
     		
     		if (selected != null) {
-    			canRemove = true;
+    			canRemove = true; //an entry has been selected and can be removed
     		}
     	});
-    	if (canRemove) {
-    		getUI().service.delete(contact);
+    	
+    	if (canRemove) { //entry selected
+    		getUI().service.delete(contact); //remove entry
     		
+    		//notify user of removed task
     		String msg2 = String.format("Removed '%s'.", contact.getTask());
     		Notification.show(msg2, Type.TRAY_NOTIFICATION);
+    		
+    		//update entries
     		getUI().refreshContacts();
     	}
-    	else {
+    	else { //no entry selected
+    		//notify user they haven't selected an entry
     		String msg1 = "Please select an item to remove.";
 			Notification.show(msg1, Type.TRAY_NOTIFICATION);
     	}

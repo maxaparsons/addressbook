@@ -19,8 +19,8 @@ public class Contact implements Serializable, Cloneable {
 
     private String firstName = "";
     private String lastName = "";
-    private String task = "";
-    private Date startDate;
+    private String task = ""; //created task, startDate, and expectedEndDate variables
+    private Date startDate;		// with associated get and set methods
     private Date expectedEndDate;
 
     public Long getId() {
@@ -80,7 +80,7 @@ public class Contact implements Serializable, Cloneable {
         }
     }
 
-    @Override
+    @Override //edited the toString method to account for the changed variables
     public String toString() {
         return "Task{" + "id=" + id + ", firstName=" + firstName
                 + ", lastName=" + lastName + ", task=" + task + ", startDate="

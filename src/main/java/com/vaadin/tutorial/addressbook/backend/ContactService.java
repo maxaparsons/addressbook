@@ -15,11 +15,13 @@ import java.util.logging.Logger;
 // class and nothing Vaadin specific.
 public class ContactService {
 
-    // Create dummy data by randomly combining first and last names
+    // Create dummy data by combining first and last names
+	// these are the members of my project group
     static String[] fnames = { "Max", "Johnathan", "Eric", "Taryn", "Levi", "Zachery",
     		"Steve" };
     static String[] lnames = { "Parsons", "Harris", "D'Entremont", "Young", "Matus", 
     		"Spencer", "Boytsun" };
+    //random tasks assigned to each member
     static String[] tasks = { "Buy shampoo", "Set alarm", "Bake a cake", "Read textbook",
     		"Buy baby formula", "Go to gym", "Get flu shot" };
 
