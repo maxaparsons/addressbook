@@ -117,6 +117,8 @@ public class ContactForm extends FormLayout {
     		if (selected != null) {
     			canRemove = true; //an entry has been selected and can be removed
     		}
+    		else
+    			canRemove = false; //no entry selected
     	});
     	
     	if (canRemove) { //entry selected
